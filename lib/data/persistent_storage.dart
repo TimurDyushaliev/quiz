@@ -1,4 +1,10 @@
-abstract final class Storage {
+abstract final class PersistentStorage {
+  static const topics = [
+    'History',
+    'Leisure',
+    'Famous people and inventions',
+    'Culture',
+  ];
   static const difficulty10 = [
     {
       "question": "What year did World War II end?",

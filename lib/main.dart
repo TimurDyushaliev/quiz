@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quiz/pages/select_difficulty_level_page.dart';
+import 'package:quiz/view/pages/select_difficulty_level_page.dart';
 
 void main() {
   runApp(const App());

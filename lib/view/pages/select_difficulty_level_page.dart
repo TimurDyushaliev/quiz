@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:quiz/pages/quiz_page.dart';
+import 'package:quiz/data/score_storage.dart';
+import 'package:quiz/view/pages/select_topic_page.dart';
+import 'package:quiz/view/widgets/background_scaffold.dart';
 
 class SelectDifficultyLevelPage extends StatefulWidget {
   const SelectDifficultyLevelPage({super.key});
@@ -12,8 +14,27 @@ class SelectDifficultyLevelPage extends StatefulWidget {
 class _SelectDifficultyLevelPageState extends State<SelectDifficultyLevelPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Quiz App')),
+    return BackgroundScaffold(
+      appBar: AppBar(
+        title: const Text('Quiz App'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: StreamBuilder<int>(
+                initialData: 0,
+                stream: ScoreStorage.stream,
+                builder: (context, snapshot) {
+                  return Text(
+                    'Total score: ${snapshot.data}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  );
+                }),
+          )
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -23,6 +44,7 @@ class _SelectDifficultyLevelPageState extends State<SelectDifficultyLevelPage> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 10),
@@ -36,7 +58,7 @@ class _SelectDifficultyLevelPageState extends State<SelectDifficultyLevelPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => QuizPage(
+                        builder: (_) => SelectTopicPage(
                           difficultyLevel: difficultyLevel,
                         ),
                       ),
