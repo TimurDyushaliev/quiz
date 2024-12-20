@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quiz/data/score_storage.dart';
+import 'package:quiz/services/audio_player_service.dart';
 import 'package:quiz/view/pages/select_topic_page.dart';
 import 'package:quiz/view/widgets/background_scaffold.dart';
 
@@ -63,6 +64,7 @@ class _SelectDifficultyLevelPageState extends State<SelectDifficultyLevelPage> {
                         ),
                       ),
                     );
+                    AudioPlayerService().playAudio();
                   },
                   child: Text('$difficultyLevel Points'),
                 ),
