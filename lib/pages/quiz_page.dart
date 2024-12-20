@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:quiz/data/storage.dart';
 import 'package:quiz/pages/result_page.dart';
@@ -17,6 +19,8 @@ class _QuizPageState extends State<QuizPage> {
   late List<String> answers;
   late int questionIndex;
   late int score;
+  late Timer timer;
+  late List<String> shuffledAnswers;
 
   @override
   void initState() {
@@ -34,14 +38,28 @@ class _QuizPageState extends State<QuizPage> {
     question = data[questionIndex]['question'] as String;
     answers = data[questionIndex]['answers'] as List<String>;
     score = 0;
+    _setTimer();
+    shuffledAnswers = List.of(answers)..shuffle();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    final shuffled = List.of(answers)..shuffle();
-
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.difficultyLevel} Points Quiz')),
+      appBar: AppBar(
+        title: Text('${widget.difficultyLevel} Points Quiz'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: _getTimer(),
+          )
+        ],
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -57,7 +75,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              ...shuffled.map(
+              ...shuffledAnswers.map(
                 (answer) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   child: ElevatedButton(
@@ -73,15 +91,28 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  void _checkAnswer(String answer) {
+  void _setTimer() {
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        if (mounted) setState(() {});
+        if (timer.tick == 10) _checkAnswer(null);
+      },
+    );
+  }
+
+  void _checkAnswer(String? answer) {
     if (questionIndex < data.length - 1) {
       if (answer == answers[0]) {
         score += widget.difficultyLevel;
       }
+      timer.cancel();
+      _setTimer();
       setState(() {
         questionIndex++;
         question = data[questionIndex]['question'] as String;
         answers = data[questionIndex]['answers'] as List<String>;
+        shuffledAnswers = List.of(answers)..shuffle();
       });
     } else {
       if (answer == answers[0]) {
@@ -94,5 +125,18 @@ class _QuizPageState extends State<QuizPage> {
         ),
       );
     }
+  }
+
+  Widget _getTimer() {
+    final tick = timer.tick;
+    final text = tick == 0 ? '00:10' : '00:0${10 - tick}';
+
+    return Text(
+      text,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: tick > 6 ? Colors.red : null,
+      ),
+    );
   }
 }
